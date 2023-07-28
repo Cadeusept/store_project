@@ -3,6 +3,7 @@ module handler
 go 1.20
 
 require (
+	github.com/Cadeusept/store_project v0.0.0-20230728201112-b207850369b0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
