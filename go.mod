@@ -1,4 +1,4 @@
-module handler
+module store-project
 
 go 1.20
 
