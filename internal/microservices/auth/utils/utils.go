@@ -11,3 +11,10 @@ func ProtoBySessionModel(s *models.Session) *auth_proto.Session {
 		Value: s.SessionID,
 	}
 }
+
+func SessionModelByProto(s *auth_proto.Session) *models.Session {
+	return &models.Session{
+		UID:       s.UID,
+		SessionID: s.Value,
+	}
+}
