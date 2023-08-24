@@ -1,11 +1,12 @@
-package usecase
+package repository
 
 import (
-	"store-project/internal/handler/infrastructure/repository"
 	"store-project/internal/models"
+
+	"github.com/jmoiron/sqlx"
 )
 
-type HandlerUseCaseI interface {
+type TransactionRepo interface {
 	Create(models.Transaction) (int, error)
 	ChangeStatus(id int64, status string) error
 	CheckStatusById(id int64) (string, error)
@@ -14,12 +15,12 @@ type HandlerUseCaseI interface {
 	CancelTransactionById(id int64) error
 }
 
-type handlerUC struct {
-	transactionRepo repository.TransactionRepo
+type Repository struct {
+	TransactionRepo
 }
 
-func newHandlerUC(repos *repository.Repository) *handlerUC {
-	return &handlerUC{
-		transactionRepo: repos.TransactionRepo,
+func NewRepository(db *sqlx.DB) *Repository {
+	return &Repository{
+		TransactionRepo: NewTransactionsPostgres(db),
 	}
 }
