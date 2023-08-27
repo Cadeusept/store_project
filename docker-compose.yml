@@ -1,4 +1,27 @@
 services:
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    command: [ "postgres",
+               #"-e", "POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'",
+               "-c", "log_directory=/var/log/postgresql",
+               "-c", "logging_collector=on",
+               "-c", "log_statement=all" ]
+    ports:
+      - "5432:5432"
+    networks:
+      my_network:
+        ipv4_address: 172.28.0.3
+#    volumes:
+#      - postgres:/var/lib/postgresql/data
+
   app:
     build:
       context: .
@@ -6,24 +29,22 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    command: sh -c "./main"
+    #migrate -path ./internal/handler/schema -database 'postgres://postgres:qwerty@172.28.0.3:5432/postgres?sslmode=disable' up;        
     ports:
       - "8000:8000"
+    networks:
+      my_network:
+        ipv4_address: 172.28.0.2
   
-  db:
-    image: postgres
-    restart: always
-    env_file:
-      - .env
-    command: [ "postgres",
-               #"-e", "POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'",
-               "-c", "log_directory=/var/log/postgresql",
-               "-c", "logging_collector=on",
-               "-c", "log_statement=all" ]
-    ports:
-      - "5436:5432"
-#    volumes:
-#      - postgres:/var/lib/postgresql/data
-  
+networks:
+  my_network:
+    name: seekers_network
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
 #volumes:
 #  postgres:

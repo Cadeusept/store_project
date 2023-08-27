@@ -1,4 +1,4 @@
-package server
+package httpserver
 
 import (
 	"context"
@@ -22,6 +22,6 @@ func (s *HandlerServer) Run(port string, handler http.Handler) error {
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *HandlerServer) Shutdown(ctx context.Context) {
-	s.httpServer.Shutdown(ctx)
+func (s *HandlerServer) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }

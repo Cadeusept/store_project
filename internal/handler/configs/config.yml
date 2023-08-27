@@ -2,8 +2,8 @@ handler:
   port: "8000"
 
 db:
-  host:     "localhost"
-  port:     "5436"
+  host:     "172.28.0.3"
+  port:     "5432"
   username: "postgres"
   dbname:   "postgres"
   sslmode:  "disable"

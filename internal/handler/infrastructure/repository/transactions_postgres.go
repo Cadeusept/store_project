@@ -39,11 +39,11 @@ func (r *TransactionsPostgres) ChangeStatus(id int64, status string) error {
 	var condition string
 	switch {
 	case status == statusError:
-		condition = "tt.stat=\"" + statusNew + "\""
+		condition = "tt.stat='" + statusNew + "'"
 	case status == statusFailed:
-		condition = "tt.stat=\"" + statusNew + "\" OR tt.stat=\"" + statusError + "\""
+		condition = "tt.stat='" + statusNew + "' OR tt.stat='" + statusError + "'"
 	case status == statusSuccess:
-		condition = "tt.stat=\"" + statusNew + "\""
+		condition = "tt.stat='" + statusNew + "'"
 	case status == statusCancelled:
 		return errors.New("to cancel transaction use specialized method")
 	default:
@@ -52,7 +52,6 @@ func (r *TransactionsPostgres) ChangeStatus(id int64, status string) error {
 
 	query := fmt.Sprintf("UPDATE %s tt SET changed=$1, stat=$2 WHERE tt.id=$3 AND (%s)",
 		transactionsTable, condition)
-	// row := r.db.QueryRow(query, t.UserId, t.UserEmail, t.Amount, t.Currency, time.Now(), time.Now(), statusNew)
 
 	_, err := r.db.Exec(query, time.Now(), status, id)
 
@@ -60,7 +59,7 @@ func (r *TransactionsPostgres) ChangeStatus(id int64, status string) error {
 }
 
 func (r *TransactionsPostgres) CancelTransactionById(id int64) error {
-	condition := "tt.stat=\"" + statusNew + "\" OR tt.stat=\"" + statusError + "\""
+	condition := "tt.stat='" + statusNew + "' OR tt.stat='" + statusError + "'"
 
 	query := fmt.Sprintf("UPDATE %s tt SET changed=$1, stat=$2 WHERE tt.id=$3 AND (%s)",
 		transactionsTable, condition)

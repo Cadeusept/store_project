@@ -8,11 +8,11 @@ import (
 
 type TransactionRepo interface {
 	Create(models.Transaction) (int, error)
-	ChangeStatus(id int64, status string) error
-	CheckStatusById(id int64) (string, error)
-	GetTransactionsByUserId(uId int64) ([]models.Transaction, error)
-	GetTransactionsByUserEmail(email string) ([]models.Transaction, error)
-	CancelTransactionById(id int64) error
+	ChangeStatus(int64, string) error
+	CheckStatusById(int64) (string, error)
+	GetTransactionsByUserId(int64) ([]models.Transaction, error)
+	GetTransactionsByUserEmail(string) ([]models.Transaction, error)
+	CancelTransactionById(int64) error
 }
 
 type Repository struct {

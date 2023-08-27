@@ -25,11 +25,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		get := transaction.Group("/get")
 		{
-			get.GET("?id=:id", h.getByUserId)
-			get.GET("?email=:email", h.getByUserEmail)
+			get.GET("/userid/:id", h.getByUserId)
+			get.GET("/email/:email", h.getByUserEmail)
 		}
 
-		transaction.DELETE("/:id", h.cancelById)
+		transaction.POST("/cancel/:id", h.cancelById)
 	}
 
 	return router
