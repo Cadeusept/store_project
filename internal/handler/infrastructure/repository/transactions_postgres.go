@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"store-project/internal/models"
 	"time"
 
@@ -27,8 +28,17 @@ func NewTransactionsPostgres(db *sqlx.DB) *TransactionsPostgres {
 
 func (r *TransactionsPostgres) Create(t models.Transaction) (int, error) {
 	var id int
+	var status string
+	randomiser := rand.New(rand.NewSource(99))
+
+	if randomiser.Intn(10) == 0 { // с вероятностью 1/10 транзакция создастся со статусом "ошибка"
+		status = statusError
+	} else {
+		status = statusNew
+	}
+
 	query := fmt.Sprintf("INSERT INTO %s (user_id, user_email, amount, currency, created, changed, stat) values ($1, $2, $3, $4, $5, $6, $7) RETURNING id", transactionsTable)
-	row := r.db.QueryRow(query, t.UserId, t.UserEmail, t.Amount, t.Currency, time.Now(), time.Now(), statusNew)
+	row := r.db.QueryRow(query, t.UserId, t.UserEmail, t.Amount, t.Currency, time.Now(), time.Now(), status)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -53,9 +63,19 @@ func (r *TransactionsPostgres) ChangeStatus(id int64, status string) error {
 	query := fmt.Sprintf("UPDATE %s tt SET changed=$1, stat=$2 WHERE tt.id=$3 AND (%s)",
 		transactionsTable, condition)
 
-	_, err := r.db.Exec(query, time.Now(), status, id)
+	res, err := r.db.Exec(query, time.Now(), status, id)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err != nil {
+		return err
+	} else if rowsAffected == 0 {
+		return errors.New("cannot change status")
+	}
+
+	return nil
 }
 
 func (r *TransactionsPostgres) CancelTransactionById(id int64) error {
@@ -64,8 +84,19 @@ func (r *TransactionsPostgres) CancelTransactionById(id int64) error {
 	query := fmt.Sprintf("UPDATE %s tt SET changed=$1, stat=$2 WHERE tt.id=$3 AND (%s)",
 		transactionsTable, condition)
 
-	_, err := r.db.Exec(query, time.Now(), statusCancelled, id)
-	return err
+	res, err := r.db.Exec(query, time.Now(), statusCancelled, id)
+
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err != nil {
+		return err
+	} else if rowsAffected == 0 {
+		return errors.New("cannot cancel transaction")
+	}
+
+	return nil
 }
 
 func (r *TransactionsPostgres) CheckStatusById(id int64) (string, error) {

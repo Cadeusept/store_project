@@ -1,13 +1,8 @@
 package usecase
 
 import (
-	"math/rand"
 	"store-project/internal/handler/infrastructure/repository"
 	"store-project/internal/models"
-)
-
-const (
-	statusError = "ERROR"
 )
 
 type HandlerUseCaseI interface {
@@ -20,22 +15,16 @@ type HandlerUseCaseI interface {
 }
 
 type HandlerUC struct {
-	transactionRepo repository.TransactionRepo
+	transactionRepo repository.TransactionRepoI
 }
 
 func NewHandlerUC(repos *repository.Repository) *HandlerUC {
 	return &HandlerUC{
-		transactionRepo: repos.TransactionRepo,
+		transactionRepo: repos.TransactionRepoI,
 	}
 }
 
 func (uc *HandlerUC) Create(t models.Transaction) (int, error) {
-	r := rand.New(rand.NewSource(99))
-
-	if r.Intn(10) == 0 { // с вероятностью 1/10 транзакция создастся со статусом "ошибка"
-		t.Status = statusError
-	}
-
 	return uc.transactionRepo.Create(t)
 }
 

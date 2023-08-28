@@ -6,7 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type TransactionRepo interface {
+type TransactionRepoI interface {
 	Create(models.Transaction) (int, error)
 	ChangeStatus(int64, string) error
 	CheckStatusById(int64) (string, error)
@@ -16,11 +16,11 @@ type TransactionRepo interface {
 }
 
 type Repository struct {
-	TransactionRepo
+	TransactionRepoI
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		TransactionRepo: NewTransactionsPostgres(db),
+		TransactionRepoI: NewTransactionsPostgres(db),
 	}
 }
