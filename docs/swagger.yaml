@@ -1,0 +1,284 @@
+basePath: /
+definitions:
+  controllerhttp.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  controllerhttp.getTransactionsItemsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Transaction'
+        type: array
+    type: object
+  controllerhttp.updateStatusInput:
+    properties:
+      newstatus:
+        type: string
+    required:
+    - newstatus
+    type: object
+  models.Transaction:
+    properties:
+      amount:
+        type: integer
+      changed:
+        type: string
+      created:
+        type: string
+      currency:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      userEmail:
+        type: string
+      userId:
+        type: integer
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API Server for Transactions Store Application
+  title: Transactions Store API
+  version: "1.0"
+paths:
+  /transaction/cancel/{transaction-id}:
+    post:
+      consumes:
+      - application/json
+      description: cancel transaction
+      operationId: cancel-transaction
+      parameters:
+      - description: transaction id
+        in: path
+        name: transaction-id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: CancelTransaction
+      tags:
+      - transactions
+  /transaction/changestatus/{transaction-id}:
+    put:
+      consumes:
+      - application/json
+      description: change transaction status
+      operationId: changestatus-transaction
+      parameters:
+      - description: transaction id
+        in: path
+        name: transaction-id
+        required: true
+        type: integer
+      - description: transaction status
+        in: body
+        name: transaction-status
+        required: true
+        schema:
+          $ref: '#/definitions/controllerhttp.updateStatusInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: ChangeStatus
+      tags:
+      - transactions
+  /transaction/checkstatus/{transaction-id}:
+    get:
+      consumes:
+      - application/json
+      description: check transaction status
+      operationId: checkstatus-transaction
+      parameters:
+      - description: transaction id
+        in: path
+        name: transaction-id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: CheckStatus
+      tags:
+      - transactions
+  /transaction/create:
+    post:
+      consumes:
+      - application/json
+      description: create new transaction
+      operationId: create-transaction
+      parameters:
+      - description: transaction info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: Create
+      tags:
+      - transactions
+  /transaction/get/email/{user-email}:
+    get:
+      consumes:
+      - application/json
+      description: get transactions by user email
+      operationId: getbyemail-transactions
+      parameters:
+      - description: user email
+        in: path
+        name: user-email
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllerhttp.getTransactionsItemsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: GetTransactionsByUserEmail
+      tags:
+      - transactions
+  /transaction/get/userid/{user-id}:
+    get:
+      consumes:
+      - application/json
+      description: get transactions by user id
+      operationId: getbyid-transactions
+      parameters:
+      - description: user id
+        in: path
+        name: user-id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: iobject
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllerhttp.errorResponse'
+      summary: GetTransactionsByUserId
+      tags:
+      - transactions
+swagger: "2.0"

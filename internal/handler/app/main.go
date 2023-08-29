@@ -16,6 +16,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @title Transactions Store API
+// @version 1.0
+// @description API Server for Transactions Store Application
+
+// @host localhost:8000
+// @BasePath /
+
 func main() {
 	log.SetFormatter(new(log.JSONFormatter))
 
